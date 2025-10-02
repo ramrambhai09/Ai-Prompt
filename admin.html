@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SarvaLink — Admin + Home (Firebase CRUD)</title>
+  <style>
+    :root{ --bg:#0f1724; --card:#0b1220; --accent:#06b6d4; --muted:#9aa6b2; color-scheme: dark; }
+    *{box-sizing:border-box} 
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#07131b 0%,#051722 100%);color:#e6f0f2;margin:0;padding:0}
+    header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,0.03)}
+    header h1{font-size:18px;margin:0}
+    nav a{color:var(--muted);margin-left:12px;text-decoration:none}
+    .container{max-width:1100px;margin:20px auto;padding:0 16px}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:20px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.6);}    
+    label{display:block;margin:10px 0 6px;color:var(--muted);font-size:13px}
+    input[type=text],textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    textarea{min-height:100px;resize:vertical}
+    .btn{display:inline-block;padding:10px 14px;border-radius:10px;background:var(--accent);color:#012;cursor:pointer;border:none}
+    .prompts{display:grid;grid-template-columns:1fr;gap:16px}
+    .prompt-card{background:#111;padding:12px;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;}
+    .prompt-card img{width:100%;height:auto;object-fit:cover;border-radius:8px;margin-bottom:8px;}
+    .meta{font-size:13px;color:var(--muted);margin-top:6px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    footer{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+    .small{font-size:12px;color:var(--muted)}
+    
+    /* Trending toggle styles */
+    .trending-toggle {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+      gap: 8px;
+    }
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #374151;
+      transition: .4s;
+      border-radius: 20px;
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .toggle-slider {
+      background-color: var(--accent);
+    }
+    input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+    
+    /* Trending badge */
+    .trending-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, #ff6b6b, #ffa500);
+      color: white;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 8px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SarvaLink — Admin + Home (Firebase CRUD)</h1>
+    <nav>
+      <a href="#home" id="nav-home">Home</a>
+      <a href="#admin" id="nav-admin">Admin</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <section id="main-col">
+        <div class="card" id="home-section">
+          <h2>Home — Prompts</h2>
+          <div id="prompts" class="prompts" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <aside>
+        <div class="card" id="admin-section">
+          <h2>Admin Panel</h2>
+          <label for="title">Title</label>
+          <input id="title" type="text" placeholder="Enter title..." />
+
+          <label for="prompt">Prompt / Description</label>
+          <textarea id="prompt" placeholder="Enter prompt or description..."></textarea>
+
+          <label for="imageUrl">Image URL (jpg/png/jpeg)</label>
+          <input id="imageUrl" type="text" placeholder="https://github.com/username/repo/image.jpg" />
+          
+          <!-- Trending toggle -->
+          <div class="trending-toggle">
+            <label class="toggle-label">
+              <div class="toggle-switch">
+                <input type="checkbox" id="trendingToggle">
+                <span class="toggle-slider"></span>
+              </div>
+              <span>Mark as Trending</span>
+            </label>
+          </div>
+
+          <div class="controls">
+            <button class="btn" id="publishBtn">Publish New</button>
+            <button class="btn" id="updateBtn" style="display:none">Update</button>
+            <button class="btn" id="cancelEditBtn" style="display:none;background:#f87171;color:white">Cancel</button>
+          </div>
+
+          <div id="admin-log" class="small" style="margin-top:10px"></div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer>
+    Built for you. CRUD admin panel with image support.
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAsIJdQnGQSBT52QxLR4nhBGFRWhDEivxs",
+      authDomain: "ai-prompt-defd7.firebaseapp.com",
+      projectId: "ai-prompt-defd7",
+      storageBucket: "ai-prompt-defd7.firebasestorage.app",
+      messagingSenderId: "148280135795",
+      appId: "1:148280135795:web:ad29ec826ead10ac6fda06",
+      measurementId: "G-X1Z5N066C1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const promptsEl = document.getElementById('prompts');
+    const titleEl = document.getElementById('title');
+    const promptEl = document.getElementById('prompt');
+    const imageUrlEl = document.getElementById('imageUrl');
+    const trendingToggle = document.getElementById('trendingToggle');
+    const publishBtn = document.getElementById('publishBtn');
+    const updateBtn = document.getElementById('updateBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const adminLog = document.getElementById('admin-log');
+
+    let editId = null;
+
+    function logAdmin(msg){
+      adminLog.innerText = msg;
+      setTimeout(()=>{ if(adminLog.innerText===msg) adminLog.innerText = ''; },4000);
+    }
+
+    async function publishPrompt(){
+      const title = titleEl.value.trim();
+      const prompt = promptEl.value.trim();
+      const imageUrl = imageUrlEl.value.trim();
+      const isTrending = trendingToggle.checked;
+      
+      if(!title || !prompt){ alert("Title and prompt required"); return; }
+      
+      await db.collection('prompts').add({
+        title, 
+        prompt, 
+        imageUrl, 
+        isTrending,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      
+      logAdmin("Prompt published ✔️");
+      resetForm();
+    }
+
+    async function updatePrompt(){
+      if(!editId){ return; }
+      const title = titleEl.value.trim();
+      const prompt = promptEl.value.trim();
+      const imageUrl = imageUrlEl.value.trim();
+      const isTrending = trendingToggle.checked;
+      
+      await db.collection('prompts').doc(editId).update({
+        title, 
+        prompt, 
+        imageUrl, 
+        isTrending
+      });
+      
+      logAdmin("Prompt updated ✔️");
+      resetForm();
+    }
+
+    async function deletePrompt(id){
+      if(!confirm("Delete this prompt?")) return;
+      await db.collection('prompts').doc(id).delete();
+      logAdmin("Prompt deleted ❌");
+    }
+
+    function editPrompt(data){
+      editId = data.id;
+      titleEl.value = data.title;
+      promptEl.value = data.prompt;
+      imageUrlEl.value = data.imageUrl || "";
+      trendingToggle.checked = data.isTrending || false;
+      
+      publishBtn.style.display="none";
+      updateBtn.style.display="inline-block";
+      cancelEditBtn.style.display="inline-block";
+      logAdmin("Editing prompt — make changes and click Update.");
+    }
+
+    function resetForm(){
+      editId = null;
+      titleEl.value=""; 
+      promptEl.value=""; 
+      imageUrlEl.value="";
+      trendingToggle.checked = false;
+      
+      publishBtn.style.display="inline-block";
+      updateBtn.style.display="none";
+      cancelEditBtn.style.display="none";
+    }
+
+    cancelEditBtn.addEventListener('click', resetForm);
+    publishBtn.addEventListener('click', publishPrompt);
+    updateBtn.addEventListener('click', updatePrompt);
+
+    function renderPrompts(docs){
+      promptsEl.innerHTML = "";
+      docs.forEach(doc=>{
+        const data = doc.data();
+        const card = document.createElement('div');
+        card.className="prompt-card";
+        
+        if(data.imageUrl){
+          const img=document.createElement('img');
+          img.src=data.imageUrl;
+          card.appendChild(img);
+        }
+        
+        const h3=document.createElement('div');
+        h3.innerHTML=`<strong>${data.title}</strong>`;
+        if(data.isTrending) {
+          h3.innerHTML += `<span class="trending-badge">TRENDING</span>`;
+        }
+        card.appendChild(h3);
+        
+        const p=document.createElement('div');
+        p.className="meta";
+        p.innerText=data.prompt;
+        card.appendChild(p);
+
+        const btns=document.createElement('div'); 
+        btns.className="controls";
+        
+        const editB=document.createElement('button'); 
+        editB.className="btn"; 
+        editB.textContent="Edit"; 
+        editB.onclick=()=>editPrompt({id:doc.id,...data});
+        
+        const delB=document.createElement('button'); 
+        delB.className="btn"; 
+        delB.style.background="#f87171"; 
+        delB.style.color="white"; 
+        delB.textContent="Delete"; 
+        delB.onclick=()=>deletePrompt(doc.id);
+        
+        btns.appendChild(editB); 
+        btns.appendChild(delB);
+        card.appendChild(btns);
+
+        promptsEl.appendChild(card);
+      });
+    }
+
+    db.collection('prompts').orderBy("createdAt","desc").onSnapshot(snapshot=>{
+      const docs=[]; 
+      snapshot.forEach(doc=>docs.push(doc));
+      renderPrompts(docs);
+    });
+  </script>
+</body>
+</html>

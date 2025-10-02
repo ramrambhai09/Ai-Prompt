@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SarvaLink — AI Prompts & Image Generation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --dark-bg: #0f0f23;
+            --card-bg: #1a1a2e;
+            --card-hover: #22223a;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border: #2d3748;
+            --success: #10b981;
+            --border-radius: 16px;
+            --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #161627 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(15, 15, 35, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .hero-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--text-primary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Section Styling */
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .section-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+
+        /* Trending Section */
+        .trending-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .trending-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .trending-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(90deg, var(--accent), #f97316);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .trending-img-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .trending-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .trending-card:hover .trending-img {
+            transform: scale(1.05);
+        }
+
+        .trending-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .trending-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .trending-desc {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Prompts Grid */
+        .prompts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .prompt-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .prompt-img-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .prompt-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .prompt-card:hover .prompt-img {
+            transform: scale(1.05);
+        }
+
+        .prompt-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .prompt-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .prompt-desc {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            width: 100%;
+            margin-top: auto;
+        }
+
+        /* AI Generation Section */
+        .ai-generation {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 60px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .generation-form {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .prompt-input {
+            padding: 15px 20px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .prompt-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, var(--secondary), #0891b2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(6, 182, 212, 0.4);
+        }
+
+        .generation-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .generated-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .generated-image:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Fullscreen Modal */
+        .fullscreen-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .fullscreen-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.4s ease;
+        }
+
+        .fullscreen-modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            z-index: 1001;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--card-bg);
+            border-top: 1px solid var(--border);
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .social-link:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .prompts-grid, .trending-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .generation-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .nav-links {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .hero {
+                padding: 60px 0 40px;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .prompts-grid, .trending-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="logo-text">Ai Prompt</div>
+                </div>
+                <nav class="nav-links">
+                    <a href="#" class="nav-link active">Home</a>
+                    <a href="#" class="nav-link">Explore</a>
+                    <a href="#" class="nav-link">Generate</a>
+                    <a href="#" class="nav-link">Community</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title">Unleash Your Creativity with AI</h1>
+            <p class="hero-subtitle">Discover a curated collection of AI prompts designed to inspire your next project. Generate stunning images, write compelling content, and explore the boundaries of artificial intelligence.</p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-value">1,250+</div>
+                    <div class="stat-label">AI Prompts</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">5,800+</div>
+                    <div class="stat-label">Images Generated</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">12,400+</div>
+                    <div class="stat-label">Community Members</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="container">
+        <!-- Trending Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-fire"></i>
+                    Trending Prompts
+                </h2>
+                <div class="section-controls">
+                    <button class="btn btn-secondary btn-sm">
+                        <i class="fas fa-plus"></i>
+                        Add Trending
+                    </button>
+                    <button class="btn btn-secondary btn-sm">
+                        <i class="fas fa-edit"></i>
+                        Manage
+                    </button>
+                </div>
+            </div>
+            <div class="trending-container" id="trending-prompts">
+                <p style="text-align:center; color:var(--text-muted); padding: 40px;">Loading trending prompts...</p>
+            </div>
+        </section>
+
+        <!-- AI Image Generation Section -->
+        <section class="ai-generation">
+            <h2 class="section-title" style="margin-bottom: 20px;">
+                <i class="fas fa-magic"></i>
+                AI Image Generation
+            </h2>
+            <div class="generation-form">
+                <input type="text" class="prompt-input" id="ai-prompt-input" placeholder="Describe the image you want to generate...">
+                <button class="generate-btn" id="generate-btn">
+                    <i class="fas fa-bolt"></i>
+                    Generate
+                </button>
+            </div>
+            <div class="generation-results" id="generation-results">
+                <!-- Generated images will appear here -->
+            </div>
+        </section>
+
+        <!-- All Prompts Grid Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-th-large"></i>
+                    All Prompts
+                </h2>
+                <div class="section-controls">
+                    <button class="btn btn-secondary btn-sm">
+                        <i class="fas fa-filter"></i>
+                        Filter
+                    </button>
+                    <button class="btn btn-secondary btn-sm">
+                        <i class="fas fa-sort"></i>
+                        Sort
+                    </button>
+                </div>
+            </div>
+            <div class="prompts-grid" id="prompts">
+                <!-- Prompts will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-text">
+                    &copy; 2023 SarvaLink. All rights reserved.
+                </div>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Fullscreen Modal -->
+    <div class="fullscreen-modal" id="fullscreen-modal">
+        <div class="modal-content">
+            <img class="modal-img" id="modal-img" src="" alt="Fullscreen image">
+            <button class="close-modal" id="close-modal">&times;</button>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        Prompt copied to clipboard!
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsIJdQnGQSBT52QxLR4nhBGFRWhDEivxs",
+            authDomain: "ai-prompt-defd7.firebaseapp.com",
+            projectId: "ai-prompt-defd7",
+            storageBucket: "ai-prompt-defd7.firebasestorage.app",
+            messagingSenderId: "148280135795",
+            appId: "1:148280135795:web:ad29ec826ead10ac6fda06",
+            measurementId: "G-X1Z5N066C1"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // DOM Elements
+        const promptsEl = document.getElementById("prompts");
+        const trendingPromptsEl = document.getElementById("trending-prompts");
+        const fullscreenModal = document.getElementById("fullscreen-modal");
+        const modalImg = document.getElementById("modal-img");
+        const closeModal = document.getElementById("close-modal");
+        const notification = document.getElementById("notification");
+        const aiPromptInput = document.getElementById("ai-prompt-input");
+        const generateBtn = document.getElementById("generate-btn");
+        const generationResults = document.getElementById("generation-results");
+
+        // Helper function for sanitizing HTML
+        function escapeHtml(s) {
+            if (!s) return '';
+            return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
+        }
+
+        // Function to render a single prompt card
+        function renderPromptCard(data, container) {
+            const card = document.createElement("div");
+            card.className = "card prompt-card";
+            card.innerHTML = `
+                <div class="prompt-img-container">
+                    <img src="${escapeHtml(data.imageUrl || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80')}" 
+                         alt="${escapeHtml(data.title)}" 
+                         class="prompt-img"
+                         data-fullscreen="${escapeHtml(data.imageUrl || '')}">
+                </div>
+                <div class="prompt-content">
+                    <h3 class="prompt-title">${escapeHtml(data.title)}</h3>
+                    <p class="prompt-desc">${escapeHtml(data.prompt)}</p>
+                    <button class="btn btn-primary copy-btn" data-prompt="${escapeHtml(data.prompt)}">
+                        <i class="fas fa-copy"></i>
+                        Copy Prompt
+                    </button>
+                </div>
+            `;
+            container.appendChild(card);
+            
+            // Add event listener for the copy button
+            const copyBtn = card.querySelector('.copy-btn');
+            copyBtn.addEventListener('click', function() {
+                const promptText = this.getAttribute('data-prompt');
+                copyToClipboard(promptText);
+                showNotification();
+                
+                // Visual feedback for copy action
+                this.innerHTML = `<i class="fas fa-check"></i> Copied!`;
+                this.style.background = 'var(--success)';
+                
+                setTimeout(() => {
+                    this.innerHTML = `<i class="fas fa-copy"></i> Copy Prompt`;
+                    this.style.background = '';
+                }, 2000);
+            });
+            
+            // Add event listener for image fullscreen view
+            const img = card.querySelector('.prompt-img');
+            img.addEventListener('click', function() {
+                const fullscreenUrl = this.getAttribute('data-fullscreen');
+                if (fullscreenUrl) {
+                    openFullscreen(fullscreenUrl);
+                }
+            });
+        }
+
+        // Function to render a trending item
+        function renderTrendingItem(data, container) {
+            const item = document.createElement("div");
+            item.className = "card trending-card";
+            item.innerHTML = `
+                <div class="trending-img-container">
+                    <span class="trending-badge">
+                        <i class="fas fa-fire"></i> Trending
+                    </span>
+                    <img src="${escapeHtml(data.imageUrl || 'https://images.unsplash.com/photo-1682687221363-72518513620e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80')}" 
+                         alt="${escapeHtml(data.title)}" 
+                         class="trending-img">
+                </div>
+                <div class="trending-content">
+                    <h3 class="trending-title">${escapeHtml(data.title)}</h3>
+                    <p class="trending-desc">${escapeHtml(data.prompt)}</p>
+                    <button class="btn btn-primary copy-btn" data-prompt="${escapeHtml(data.prompt)}">
+                        <i class="fas fa-copy"></i>
+                        Copy Prompt
+                    </button>
+                </div>
+            `;
+            container.appendChild(item);
+            
+            // Add event listener for the copy button
+            const copyBtn = item.querySelector('.copy-btn');
+            copyBtn.addEventListener('click', function() {
+                const promptText = this.getAttribute('data-prompt');
+                copyToClipboard(promptText);
+                showNotification();
+                
+                // Visual feedback for copy action
+                this.innerHTML = `<i class="fas fa-check"></i> Copied!`;
+                this.style.background = 'var(--success)';
+                
+                setTimeout(() => {
+                    this.innerHTML = `<i class="fas fa-copy"></i> Copy Prompt`;
+                    this.style.background = '';
+                }, 2000);
+            });
+        }
+
+        // Function to copy text to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).catch(err => {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textArea);
+            });
+        }
+
+        // Function to show notification
+        function showNotification() {
+            notification.classList.add('active');
+            setTimeout(() => {
+                notification.classList.remove('active');
+            }, 3000);
+        }
+
+        // Function to open image in fullscreen
+        function openFullscreen(imageUrl) {
+            modalImg.src = imageUrl;
+            fullscreenModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Function to close fullscreen modal
+        function closeFullscreen() {
+            fullscreenModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Function to generate AI image (mock implementation)
+        function generateAIImage(prompt) {
+            // In a real implementation, this would call an AI image generation API
+            // For demonstration, we'll use a placeholder service
+            const placeholderUrl = `https://images.unsplash.com/photo-1682687221363-72518513620e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80`;
+            
+            // Simulate API delay
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    resolve(placeholderUrl);
+                }, 2000);
+            });
+        }
+
+        // Event Listeners
+        closeModal.addEventListener('click', closeFullscreen);
+        
+        // Close modal when clicking outside the image
+        fullscreenModal.addEventListener('click', function(e) {
+            if (e.target === fullscreenModal) {
+                closeFullscreen();
+            }
+        });
+        
+        // Generate AI image
+        generateBtn.addEventListener('click', async function() {
+            const prompt = aiPromptInput.value.trim();
+            if (!prompt) {
+                alert('Please enter a prompt');
+                return;
+            }
+            
+            // Show loading state
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Generating...`;
+            
+            try {
+                const imageUrl = await generateAIImage(prompt);
+                
+                // Create and add the generated image
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = prompt;
+                img.className = 'generated-image';
+                img.addEventListener('click', () => openFullscreen(imageUrl));
+                
+                generationResults.prepend(img);
+                
+                // Clear the input
+                aiPromptInput.value = '';
+            } catch (error) {
+                console.error('Error generating image:', error);
+                alert('Failed to generate image. Please try again.');
+            } finally {
+                // Reset button state
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = `<i class="fas fa-bolt"></i> Generate`;
+            }
+        });
+
+        // Fetch and display ALL prompts
+        db.collection("prompts").orderBy("createdAt", "desc").get()
+            .then(snapshot => {
+                if (snapshot.empty) {
+                    promptsEl.innerHTML = "<p style='text-align:center; color:var(--text-muted); padding: 40px;'>No prompts available. Create some in the admin panel!</p>";
+                    return;
+                }
+                promptsEl.innerHTML = ""; // Clear the loading message
+                snapshot.forEach(doc => {
+                    renderPromptCard(doc.data(), promptsEl);
+                });
+            })
+            .catch(err => {
+                promptsEl.innerHTML = "<p style='color:#ef4444; text-align:center; padding: 40px;'>Error fetching prompts: " + err.message + "</p>";
+                console.error(err);
+            });
+
+        // Fetch and display TRENDING prompts
+        db.collection("prompts").where("isTrending", "==", true).limit(6).get()
+            .then(snapshot => {
+                if (snapshot.empty) {
+                    trendingPromptsEl.innerHTML = "<p style='text-align:center; color:var(--text-muted); padding: 40px;'>No trending prompts at the moment. Check back soon!</p>";
+                    return;
+                }
+                trendingPromptsEl.innerHTML = ""; // Clear the loading message
+                snapshot.forEach(doc => {
+                    renderTrendingItem(doc.data(), trendingPromptsEl);
+                });
+            })
+            .catch(err => {
+                trendingPromptsEl.innerHTML = "<p style='color:#ef4444; text-align:center; padding: 40px;'>Error fetching trending prompts: " + err.message + "</p>";
+                console.error(err);
+            });
+    </script>
+</body>
+</html>
